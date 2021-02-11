@@ -1,9 +1,5 @@
 import React, { useState } from "react";
-import {
-  StateMachineProvider,
-  createStore,
-  useStateMachine,
-} from "little-state-machine";
+import { StateMachineProvider, createStore, useStateMachine } from "little-state-machine";
 import { useForm, useFieldArray, useWatch } from "react-hook-form";
 
 createStore({
@@ -30,45 +26,49 @@ const Page = () => {
     defaultValues: state.yourDetails,
   });
   const [indexes, setIndexes] = useState([]);
-  const [contador, setContador] = useState(0);
+  const [counter, setCounter] = useState(0);
 
   const AdicionarEscalao = () => {
-    setIndexes((prevIndexes) => [...prevIndexes, contador]);
-    setContador((prevContador) => prevContador + 1);
+    setIndexes((prevIndexes) => [...prevIndexes, counter]);
+    setCounter((prevCount) => prevCount + 1);
+  };
+
+  const RemoverEscalao = (index) => () => {
+    setIndexes((prevIndexes) => [...prevIndexes.filter((item) => item !== index)]);
+    setCounter((prevCounter) => prevCounter - 1);
   };
 
   //Save Data
   const onSubmit = (data) => {
     actions.updateAction(data);
-    console.log(data)
-    //console.log(state);
+    console.log("See your Data:", data);
   };
 
   return (
     <React.Fragment>
       <h1>Dynamic Form with React Hook Form</h1>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <input ref={register} name="firstName" placeholder="First Name"></input>
-        <input ref={register} name="lastName" placeholder="LastName"></input>
         <div>
           {indexes.map((index) => {
             return (
               <div key={index}>
-                <input
-                  ref={register}
-                  name={`categories[${index}].categoryName`}
-                  placeholder="LastName"
-                ></input>
-                <input
-                  ref={register}
-                  name={`categories[${index}].categoryDescription`}
-                  placeholder="LastName"
-                ></input>
-                
+                <label>
+                  Category Name
+                  <input ref={register({required: true})} name={`categories[${index}].categoryName`} placeholder="LastName" />
+                </label>
+                <label>
+                  Category Description
+                  <input ref={register({required: true})} name={`categories[${index}].categoryDescription`} placeholder="LastName" />
+                </label>
+                <button type="button" onClick={RemoverEscalao(index)}>
+                  Remover
+                </button>
               </div>
             );
           })}
-          <button onClick={AdicionarEscalao}>Adicionar</button>
+          <button type="button" onClick={AdicionarEscalao}>
+            Adicionar
+          </button>
         </div>
         <button type="submit">Guardar</button>
       </form>
