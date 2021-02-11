@@ -40,7 +40,8 @@ const Page = () => {
   //Save Data
   const onSubmit = (data) => {
     actions.updateAction(data);
-    console.log(state);
+    console.log(data)
+    //console.log(state);
   };
 
   return (
