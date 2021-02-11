@@ -1,17 +1,16 @@
 import React, { useState } from "react";
-import { StateMachineProvider, createStore, useStateMachine } from "little-state-machine";
+import {
+  StateMachineProvider,
+  createStore,
+  useStateMachine,
+} from "little-state-machine";
 import { useForm, useFieldArray, useWatch } from "react-hook-form";
 
 createStore({
   yourDetails: {
     firstName: "",
     lastName: "",
-    categories: [
-      {
-        categoryName: "",
-        categoryDescription: "",
-      },
-    ],
+    categories: [],
   },
 });
 
@@ -30,10 +29,13 @@ const Page = () => {
   const { handleSubmit, register, control } = useForm({
     defaultValues: state.yourDetails,
   });
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: "categories",
-  });
+  const [indexes, setIndexes] = useState([]);
+  const [contador, setContador] = useState(0);
+
+  const AdicionarEscalao = () => {
+    setIndexes((prevIndexes) => [...prevIndexes, contador]);
+    setContador((prevContador) => prevContador + 1);
+  };
 
   //Save Data
   const onSubmit = (data) => {
@@ -47,15 +49,26 @@ const Page = () => {
       <form onSubmit={handleSubmit(onSubmit)}>
         <input ref={register} name="firstName" placeholder="First Name"></input>
         <input ref={register} name="lastName" placeholder="LastName"></input>
-        {fields.map((index) => {
-          return (
-            <div>
-              <input ref={register} name={`categories[${index}].categoryName`} placeholder="LastName"></input>
-              <input ref={register} name={`categories[${index}].categoryDescription`} placeholder="LastName"></input>
-            </div>
-          );
-        })}
-
+        <div>
+          {indexes.map((index) => {
+            return (
+              <div key={index}>
+                <input
+                  ref={register}
+                  name={`categories[${index}].categoryName`}
+                  placeholder="LastName"
+                ></input>
+                <input
+                  ref={register}
+                  name={`categories[${index}].categoryDescription`}
+                  placeholder="LastName"
+                ></input>
+                
+              </div>
+            );
+          })}
+          <button onClick={AdicionarEscalao}>Adicionar</button>
+        </div>
         <button type="submit">Guardar</button>
       </form>
     </React.Fragment>
